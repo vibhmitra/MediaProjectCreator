@@ -38,12 +38,90 @@ Write-Host ""
 # --- User Input ---
 # Use the Ask-Colored function to get project details from the user
 # Ensure no trailing invisible characters exist on these lines
-$projectName = Ask-Colored -promptText "Enter project name (e.g., CoolCar)"
-$startDateInput = Ask-Colored -promptText "Enter start date (YYYY-MM-DD) or leave blank for today"
-$locationCode = Ask-Colored -promptText "Enter location code (e.g., EARTH) [default: EARTH]"
-$status = Ask-Colored -promptText "Enter project status (WIP, Beta, C, R) [default: WIP]"
-$version = Ask-Colored -promptText "Enter version (e.g., v1.0) [default: v1.0]"
-$description = Ask-Colored -promptText "Enter a short description"
+do {
+    try {
+        $projectName = Ask-Colored -promptText "Enter project name (e.g., CoolCar)"
+        if ([string]::IsNullOrWhiteSpace($projectName) -or $projectName -match '[\\/:*?"<>|]') {
+            throw "Project name cannot be empty or contain invalid characters (\ / : * ? "" < > |)."
+        }
+        $valid = $true
+    } catch {
+        Write-Host "[!] Error: $($_.Exception.Message)" -ForegroundColor Red
+        $valid = $false
+    }
+} while (-not $valid)
+
+do {
+    try {
+        $startDateInput = Ask-Colored -promptText "Enter start date (YYYY-MM-DD) or leave blank for today"
+        if (-not [string]::IsNullOrWhiteSpace($startDateInput)) {
+            [void](Get-Date $startDateInput -ErrorAction Stop) # Validate date format
+        }
+        $valid = $true
+    } catch {
+        Write-Host "[!] Error: Invalid date format. Use YYYY-MM-DD." -ForegroundColor Red
+        $valid = $false
+    }
+} while (-not $valid)
+
+do {
+    try {
+        $locationCode = Ask-Colored -promptText "Enter location code (e.g., EARTH) [default: EARTH]"
+        if ([string]::IsNullOrWhiteSpace($locationCode)) {
+            $locationCode = "EARTH"
+        }
+        $valid = $true
+    } catch {
+        Write-Host "[!] Error: $($_.Exception.Message)" -ForegroundColor Red
+        $valid = $false
+    }
+} while (-not $valid)
+
+do {
+    try {
+        $status = Ask-Colored -promptText "Enter project status (WIP, Beta, C, R) [default: WIP]"
+        if ([string]::IsNullOrWhiteSpace($status)) {
+            $status = "WIP"
+        }
+        $validStatuses = @("WIP", "Beta", "C", "R")
+        if ($status -notin $validStatuses) {
+            throw "Invalid status. Choose from WIP, Beta, C, R."
+        }
+        $valid = $true
+    } catch {
+        Write-Host "[!] Error: $($_.Exception.Message)" -ForegroundColor Red
+        $valid = $false
+    }
+} while (-not $valid)
+
+do {
+    try {
+        $version = Ask-Colored -promptText "Enter version (e.g., v1.0) [default: v1.0]"
+        if ([string]::IsNullOrWhiteSpace($version)) {
+            $version = "v1.0"
+        }
+        if (-not $version -match "^v\d+\.\d+$") {
+            throw "Invalid version format. Use vX.X (e.g., v1.0)."
+        }
+        $valid = $true
+    } catch {
+        Write-Host "[!] Error: $($_.Exception.Message)" -ForegroundColor Red
+        $valid = $false
+    }
+} while (-not $valid)
+
+do {
+    try {
+        $description = Ask-Colored -promptText "Enter a short description"
+        if ([string]::IsNullOrWhiteSpace($description)) {
+            throw "Description cannot be empty."
+        }
+        $valid = $true
+    } catch {
+        Write-Host "[!] Error: $($_.Exception.Message)" -ForegroundColor Red
+        $valid = $false
+    }
+} while (-not $valid)
 
 # --- Set Defaults ---
 # Provide default values if the user left certain inputs blank
@@ -58,28 +136,6 @@ if ([string]::IsNullOrWhiteSpace($version)) {
 if ([string]::IsNullOrWhiteSpace($locationCode)) {
     $locationCode = "EARTH"
     Write-Host "Using default location: $locationCode" -ForegroundColor Yellow
-}
-
-# Validate project name
-if ([string]::IsNullOrWhiteSpace($projectName)) {
-    Write-Host "`n[!] Project name cannot be empty." -ForegroundColor Red
-    exit
-}
-if ($projectName -match '[<>:"/\\|?*]') {
-    Write-Host "`n[!] Project name contains invalid characters." -ForegroundColor Red
-    exit
-}
-
-# Validate version format
-if (-not $version -match '^v\d+(\.\d+)*$') {
-    Write-Host "`n[!] Invalid version format. Use a format like 'v1.0'." -ForegroundColor Red
-    exit
-}
-
-# Handle default description
-if ([string]::IsNullOrWhiteSpace($description)) {
-    $description = "No description provided."
-    Write-Host "`nUsing default description." -ForegroundColor Yellow
 }
 
 # --- Process Dates and Time ---
@@ -123,15 +179,10 @@ Write-Host "`nCreating folder structure..." -ForegroundColor Gray
 # -ItemType Directory specifies folder creation
 # -Force prevents errors if folders already exist (overwrites implicitly handled by New-Item)
 # | Out-Null suppresses the output object from New-Item for a cleaner console
-try {
-    New-Item -Path $folderName -ItemType Directory -Force | Out-Null
-    New-Item -Path "$folderName/assets" -ItemType Directory -Force | Out-Null
-    New-Item -Path "$folderName/audio" -ItemType Directory -Force | Out-Null
-    New-Item -Path "$folderName/visuals" -ItemType Directory -Force | Out-Null
-} catch {
-    Write-Host "`n[!] Failed to create folder structure: $($_.Exception.Message)" -ForegroundColor Red
-    exit
-}
+New-Item -Path $folderName -ItemType Directory -Force | Out-Null
+New-Item -Path "$folderName/assets" -ItemType Directory -Force | Out-Null
+New-Item -Path "$folderName/audio" -ItemType Directory -Force | Out-Null
+New-Item -Path "$folderName/visuals" -ItemType Directory -Force | Out-Null
 
 # --- Create git-info.md File ---
 # Define the content for the git-info.md file using a PowerShell here-string.
