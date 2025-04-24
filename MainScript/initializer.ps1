@@ -60,6 +60,28 @@ if ([string]::IsNullOrWhiteSpace($locationCode)) {
     Write-Host "Using default location: $locationCode" -ForegroundColor Yellow
 }
 
+# Validate project name
+if ([string]::IsNullOrWhiteSpace($projectName)) {
+    Write-Host "`n[!] Project name cannot be empty." -ForegroundColor Red
+    exit
+}
+if ($projectName -match '[<>:"/\\|?*]') {
+    Write-Host "`n[!] Project name contains invalid characters." -ForegroundColor Red
+    exit
+}
+
+# Validate version format
+if (-not $version -match '^v\d+(\.\d+)*$') {
+    Write-Host "`n[!] Invalid version format. Use a format like 'v1.0'." -ForegroundColor Red
+    exit
+}
+
+# Handle default description
+if ([string]::IsNullOrWhiteSpace($description)) {
+    $description = "No description provided."
+    Write-Host "`nUsing default description." -ForegroundColor Yellow
+}
+
 # --- Process Dates and Time ---
 # Get the current date/time and timezone offset
 $currentTime = Get-Date
@@ -101,10 +123,15 @@ Write-Host "`nCreating folder structure..." -ForegroundColor Gray
 # -ItemType Directory specifies folder creation
 # -Force prevents errors if folders already exist (overwrites implicitly handled by New-Item)
 # | Out-Null suppresses the output object from New-Item for a cleaner console
-New-Item -Path $folderName -ItemType Directory -Force | Out-Null
-New-Item -Path "$folderName/assets" -ItemType Directory -Force | Out-Null
-New-Item -Path "$folderName/audio" -ItemType Directory -Force | Out-Null
-New-Item -Path "$folderName/visuals" -ItemType Directory -Force | Out-Null
+try {
+    New-Item -Path $folderName -ItemType Directory -Force | Out-Null
+    New-Item -Path "$folderName/assets" -ItemType Directory -Force | Out-Null
+    New-Item -Path "$folderName/audio" -ItemType Directory -Force | Out-Null
+    New-Item -Path "$folderName/visuals" -ItemType Directory -Force | Out-Null
+} catch {
+    Write-Host "`n[!] Failed to create folder structure: $($_.Exception.Message)" -ForegroundColor Red
+    exit
+}
 
 # --- Create git-info.md File ---
 # Define the content for the git-info.md file using a PowerShell here-string.
