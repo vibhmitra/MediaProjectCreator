@@ -40,7 +40,7 @@ Write-Host "╚═════════════════════�
 
 Write-Host ""
 Write-Host "+======================================+" -ForegroundColor Yellow
-Write-Host "|       🚀 NEW PROJECT INITIALIZER     |" -ForegroundColor Yellow
+Write-Host "|      🚀 NEW PROJECT INITIALIZER      |" -ForegroundColor Yellow
 Write-Host "+======================================+" -ForegroundColor Yellow
 Write-Host ""
 
