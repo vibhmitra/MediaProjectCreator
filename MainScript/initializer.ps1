@@ -28,15 +28,6 @@ function Ask-Colored {
 
 
 # --- Script Header ---
-<# 
-# Display a decorative header for the script
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-[char]::ConvertFromUtf32(0x1F4A9)
-Write-Host "clear" -NoNewline
-Write-Host "╔══════════════════════════════════════╗" -ForegroundColor Yellow
-Write-Host "║      🚀 NEW PROJECT INITIALIZER      ║" -ForegroundColor Yellow
-Write-Host "╚══════════════════════════════════════╝`n" -ForegroundColor Yellow
-#>
 
 Write-Host ""
 Write-Host "+======================================+" -ForegroundColor Yellow
