@@ -80,6 +80,7 @@ do {
 do {
     try {
         $status = Ask-Colored -promptText "Enter project status (WIP, Beta, C, R) [default: WIP]"
+        $status = $status.ToUpper()
         if ([string]::IsNullOrWhiteSpace($status)) {
             $status = "WIP"
         }
