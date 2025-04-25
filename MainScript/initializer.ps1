@@ -28,7 +28,6 @@ function Ask-Colored {
 
 
 # --- Script Header ---
-
 Write-Host ""
 Write-Host "+======================================+" -ForegroundColor Yellow
 Write-Host "|      🚀 NEW PROJECT INITIALIZER      |" -ForegroundColor Yellow
@@ -51,6 +50,8 @@ do {
     }
 } while (-not $valid)
 
+
+# This needs fixing.
 do {
     try {
         $startDateInput = Ask-Colored -promptText "Enter start date (YYYY-MM-DD) or leave blank for today"
