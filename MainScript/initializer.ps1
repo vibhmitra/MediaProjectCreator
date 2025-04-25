@@ -95,24 +95,6 @@ do {
     }
 } while (-not $valid)
 
-<#
-do {
-    try {
-        $version = Ask-Colored -promptText "Enter version (e.g., v1.0) [default: v1.0]"
-        if ([string]::IsNullOrWhiteSpace($version)) {
-            $version = "v1.0"
-        }
-        if (-not $version -match "^v\d+\.\d+$") {
-            throw "Invalid version format. Use vX.X (e.g., v1.0)."
-        }
-        $valid = $true
-    } catch {
-        Write-Host "[!] Error: $($_.Exception.Message)" -ForegroundColor Red
-        $valid = $false
-    }
-} while (-not $valid)
-#>
-
 do {
     try {
         $version = Ask-Colored -promptText "Enter version (e.g., 1.0 or v1.2) [default: v1.0]"
@@ -131,6 +113,7 @@ do {
 
         # Prefix with 'v'
         $version = "v$cleanVersion"
+
         $valid = $true
     } catch {
         Write-Host "[!] Error: $($_.Exception.Message)" -ForegroundColor Red
