@@ -77,18 +77,21 @@ do {
     }
 } while (-not $valid)
 
+$validStatuses = @("WIP", "Beta", "C", "R")
 do {
     try {
         $status = Ask-Colored -promptText "Enter project status (WIP, Beta, C, R) [default: WIP]"
         $status = $status.ToUpper()
+        
         if ([string]::IsNullOrWhiteSpace($status)) {
             $status = "WIP"
-        }
-        $validStatuses = @("WIP", "Beta", "C", "R")
-        if ($status -notin $validStatuses) {
+            Write-Host "Using Default Status WIP" -ForegroundColor Green
+            $valid = $true
+        } elseif ($status -notin $validStatuses) {
             throw "Invalid status. Choose from WIP, Beta, C, R."
+        } else {
+            $valid = $true
         }
-        $valid = $true
     } catch {
         Write-Host "[!] Error: $($_.Exception.Message)" -ForegroundColor Red
         $valid = $false
@@ -99,22 +102,21 @@ do {
     try {
         $version = Ask-Colored -promptText "Enter version (e.g., 1.0 or v1.2) [default: v1.0]"
 
-        # Check for empty or whitespace input
         if ([string]::IsNullOrWhiteSpace($version)) {
-            $version = "1.0"
+            $version = "v1.0"
+            Write-Host "Using Default Version 1.0" -ForegroundColor Green
+            $valid = $true
+        } else {
+            # Remove leading 'v' and validate format
+            $cleanVersion = $version -replace "^v", ""
+
+            if ($cleanVersion -notmatch "^\d+\.\d+$") {
+                throw "Invalid version format. Use MAJOR.MINOR (e.g., 1.0)."
+            }
+
+            $version = "v$cleanVersion"
+            $valid = $true
         }
-
-        # Remove any prefix (e.g., 'v') for validation and ensure numeric format
-        $cleanVersion = $version -replace "^v", "" # Strip leading 'v', if present
-
-        if ($cleanVersion -notmatch "^\d+\.\d+$") {
-            throw "Invalid version format. Use MAJOR.MINOR (e.g., 1.0)."
-        }
-
-        # Prefix with 'v'
-        $version = "v$cleanVersion"
-
-        $valid = $true
     } catch {
         Write-Host "[!] Error: $($_.Exception.Message)" -ForegroundColor Red
         $valid = $false
@@ -134,20 +136,6 @@ do {
     }
 } while (-not $valid)
 
-# --- Set Defaults ---
-# Provide default values if the user left certain inputs blank
-if ([string]::IsNullOrWhiteSpace($status)) {
-    $status = "WIP"
-    Write-Host "`nUsing default status: $status" -ForegroundColor Yellow
-}
-if ([string]::IsNullOrWhiteSpace($version)) {
-    $version = "v1.0"
-    Write-Host "Using default version: $version" -ForegroundColor Yellow
-}
-if ([string]::IsNullOrWhiteSpace($locationCode)) {
-    $locationCode = "EARTH"
-    Write-Host "Using default location: $locationCode" -ForegroundColor Yellow
-}
 
 # --- Process Dates and Time ---
 # Get the current date/time and timezone offset
