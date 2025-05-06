@@ -51,12 +51,12 @@ do {
 } while (-not $valid)
 
 
-# This needs fixing.
+# Getting the start date from the user
 do {
     try {
         $startDateInput = Ask-Colored -promptText "Enter start date (YYYY-MM-DD) or leave blank for today"
         if (-not [string]::IsNullOrWhiteSpace($startDateInput)) {
-            [void](Get-Date $startDateInput -ErrorAction Stop) # Validate date format
+            $customDate = Get-Date $startDateInput -ErrorAction Stop # Validate date format
         }
         $valid = $true
     } catch {
@@ -64,6 +64,20 @@ do {
         $valid = $false
     }
 } while (-not $valid)
+
+# --- Process Dates and Time ---
+$currentTime = Get-Date
+$offset = Get-TimeZoneOffset
+
+# Setting the project started date and folder name
+if ($customDate) {
+    $projectStarted = "$($customDate.ToString("yyyy-MM-dd"))T$($currentTime.ToString("HH:mm:ss"))$offset@$locationCode"
+    $startDateForFolder = $customDate.ToString("yyyyMMdd")
+} else {
+    $projectStarted = "$($currentTime.ToString("yyyy-MM-ddTHH:mm:ss"))$offset@$locationCode"
+    $startDateForFolder = $currentTime.ToString("yyyyMMdd")
+    Write-Host "`nUsing current date as start date." -ForegroundColor Yellow
+}
 
 do {
     try {
@@ -137,7 +151,7 @@ do {
     }
 } while (-not $valid)
 
-
+<#
 # --- Process Dates and Time ---
 # Get the current date/time and timezone offset
 $currentTime = Get-Date
@@ -166,6 +180,7 @@ if ([string]::IsNullOrWhiteSpace($startDateInput)) {
         exit # Stop the script execution
     }
 }
+#>
 
 # --- Create Folder Structure ---
 # Generate a folder-friendly name (slug) by removing spaces
