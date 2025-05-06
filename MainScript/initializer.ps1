@@ -37,6 +37,8 @@ Write-Host ""
 # --- User Input ---
 # Use the Ask-Colored function to get project details from the user
 # Ensure no trailing invisible characters exist on these lines
+
+# GET PROJECT NAME
 do {
     try {
         $projectName = Ask-Colored -promptText "Enter project name (e.g., CoolCar)"
@@ -114,7 +116,7 @@ do {
     }
 } while (-not $valid)
 
-#GET VERSION
+# GET VERSION
 do {
     try {
         $version = Ask-Colored -promptText "Enter version (e.g., 1.0 or v1.2) [default: v1.0]"
