@@ -89,7 +89,7 @@ if ($customDate) {
 } else {
     $projectStarted = "$($currentTime.ToString("yyyy-MM-ddTHH:mm:ss"))$offset@$locationCode"
     $startDateForFolder = $currentTime.ToString("yyyyMMdd")
-    Write-Host "`nUsing current date as start date." -ForegroundColor Yellow
+    Write-Host "`nUsing current date as start date." -ForegroundColor Green
 }
 
 # GET STATUS
