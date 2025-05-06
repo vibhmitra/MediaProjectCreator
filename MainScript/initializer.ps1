@@ -50,8 +50,21 @@ do {
     }
 } while (-not $valid)
 
+# GET LOCATION
+do {
+    try {
+        $locationCode = Ask-Colored -promptText "Enter location code (e.g., EARTH) [default: EARTH]"
+        if ([string]::IsNullOrWhiteSpace($locationCode)) {
+            $locationCode = "EARTH"
+        }
+        $valid = $true
+    } catch {
+        Write-Host "[!] Error: $($_.Exception.Message)" -ForegroundColor Red
+        $valid = $false
+    }
+} while (-not $valid)
 
-# Getting the start date from the user
+# Get DATE
 do {
     try {
         $startDateInput = Ask-Colored -promptText "Enter start date (YYYY-MM-DD) or leave blank for today"
@@ -69,7 +82,7 @@ do {
 $currentTime = Get-Date
 $offset = Get-TimeZoneOffset
 
-# Setting the project started date and folder name
+# FORMAT DATE-TIME-LOCATION
 if ($customDate) {
     $projectStarted = "$($customDate.ToString("yyyy-MM-dd"))T$($currentTime.ToString("HH:mm:ss"))$offset@$locationCode"
     $startDateForFolder = $customDate.ToString("yyyyMMdd")
@@ -79,19 +92,7 @@ if ($customDate) {
     Write-Host "`nUsing current date as start date." -ForegroundColor Yellow
 }
 
-do {
-    try {
-        $locationCode = Ask-Colored -promptText "Enter location code (e.g., EARTH) [default: EARTH]"
-        if ([string]::IsNullOrWhiteSpace($locationCode)) {
-            $locationCode = "EARTH"
-        }
-        $valid = $true
-    } catch {
-        Write-Host "[!] Error: $($_.Exception.Message)" -ForegroundColor Red
-        $valid = $false
-    }
-} while (-not $valid)
-
+# GET STATUS
 $validStatuses = @("WIP", "Beta", "C", "R")
 do {
     try {
@@ -113,6 +114,7 @@ do {
     }
 } while (-not $valid)
 
+#GET VERSION
 do {
     try {
         $version = Ask-Colored -promptText "Enter version (e.g., 1.0 or v1.2) [default: v1.0]"
@@ -138,6 +140,7 @@ do {
     }
 } while (-not $valid)
 
+# GET DESCRIPTION
 do {
     try {
         $description = Ask-Colored -promptText "Enter a short description"
@@ -151,36 +154,6 @@ do {
     }
 } while (-not $valid)
 
-<#
-# --- Process Dates and Time ---
-# Get the current date/time and timezone offset
-$currentTime = Get-Date
-$offset = Get-TimeZoneOffset
-
-# Determine the 'Project Started' timestamp and the date for the folder name
-if ([string]::IsNullOrWhiteSpace($startDateInput)) {
-    # Use current date/time if no start date was provided
-    $projectStarted = "$($currentTime.ToString("yyyy-MM-ddTHH:mm:ss"))$offset@$locationCode"
-    $startDateForFolder = $currentTime.ToString("yyyyMMdd")
-    Write-Host "`nUsing current date as start date." -ForegroundColor Yellow
-} else {
-    # Try to parse the provided start date
-    try {
-        # Convert the input string to a DateTime object. Stop script on error.
-        $customDate = Get-Date $startDateInput -ErrorAction Stop
-        # Combine the custom date with the current time and offset
-        $projectStarted = "$($customDate.ToString("yyyy-MM-dd"))T$($currentTime.ToString("HH:mm:ss"))$offset@$locationCode"
-        # Format the custom date for the folder name
-        $startDateForFolder = $customDate.ToString("yyyyMMdd")
-    } catch {
-        # Handle invalid date format input
-        Write-Host "`n[!] Invalid start date format. Use YYYY-MM-DD." -ForegroundColor Red
-        # Display the actual error message from the exception
-        Write-Host "Error details: $($_.Exception.Message)" -ForegroundColor Red
-        exit # Stop the script execution
-    }
-}
-#>
 
 # --- Create Folder Structure ---
 # Generate a folder-friendly name (slug) by removing spaces
