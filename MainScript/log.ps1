@@ -45,7 +45,6 @@ function Get-CurrentStatus {
             return $matches[1].Trim()
         }
     }
-
     return "WIP"
 }
 
@@ -79,7 +78,7 @@ function Add-LogEntry {
     $changes = Read-Host "List changes (comma-separated)"
     $changeList = $changes -split "," | ForEach-Object { ($_).Trim() } | Where-Object { $_ -ne "" }
 
-    Write-Host "`n✅ Please confirm the following entry:" -ForegroundColor Yellow
+    Write-Host "`n✔️ Please confirm the following entry:" -ForegroundColor Yellow
     Write-Host "Time: $logTime"
     Write-Host "Status: $status"
     Write-Host "Changes:"
@@ -108,15 +107,15 @@ $gitInfoPath = Get-GitInfoPath
 
 while ($true) {
     Write-Host "`nPlease select an option:" -ForegroundColor Cyan
-    Write-Host "1. Read 'git-info.md'"
-    Write-Host "2. Add Entry to 'git-info.md'"
+    Write-Host "1. Add Entry to 'git-info.md'"
+    Write-Host "2. Read 'git-info.md'"
     Write-Host "3. Exit"
 
     $choice = Read-Host "Enter your choice (1/2/3)"
 
     switch ($choice) {
-        "1" { Read-Log -filePath $gitInfoPath }
-        "2" { Add-LogEntry -filePath $gitInfoPath }
+        "1" { Add-LogEntry -filePath $gitInfoPath }
+        "2" { Read-Log -filePath $gitInfoPath }
         "3" { Write-Host "👋 Exiting..."; exit }
         default { Write-Host "❌ Invalid choice. Please select 1, 2, or 3." -ForegroundColor Red }
     }
