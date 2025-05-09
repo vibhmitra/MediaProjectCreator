@@ -6,7 +6,8 @@ function Get-GitInfoPath {
             return ".\git-info.md"
         }
 
-        Write-Host "git-info.md not found in current directory. Enter full path or folder containing it:" -ForegroundColor Yellow
+        Write-Host "⚠️ git-info.md not found in current directory." -ForegroundColor Red
+        Write-Host "`n>> Enter full path or folder containing it:" -ForegroundColor Magenta
         $path = Read-Host
 
         if (Test-Path $path) {
@@ -29,8 +30,12 @@ function Get-GitInfoPath {
 
 function Read-Log {
     param($filePath)
+    clear
     Write-Host "`n📖 Reading git-info.md:" -ForegroundColor Cyan
     Get-Content $filePath | Out-Host
+    Write-Host "`nPress any key to continue..." -ForegroundColor Yellow
+    $null = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    clear
 }
 
 function Get-CurrentStatus {
@@ -111,7 +116,7 @@ while ($true) {
     Write-Host "2. Read 'git-info.md'"
     Write-Host "3. Exit"
 
-    $choice = Read-Host "Enter your choice (1/2/3)"
+    $choice = Read-Host ">> Enter your choice (1/2/3): "
 
     switch ($choice) {
         "1" { Add-LogEntry -filePath $gitInfoPath }
