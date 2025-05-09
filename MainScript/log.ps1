@@ -55,41 +55,44 @@ function Get-CurrentStatus {
 
 function Add-LogEntry {
     param($filePath)
-
+    clear
+    Write-Host "`n📝 Adding entry to git-info.md:`n" -ForegroundColor Cyan
     $currentTime = Get-Date
     $offset = ([System.TimeZoneInfo]::Local).BaseUtcOffset.ToString("hh\:mm")
     if ($offset -notmatch "^[+-]") {
         $offset = "+" + $offset
     }
 
-    $locationCode = Read-Host "Enter location code (default = EARTH)"
+    $locationCode = Read-Host ">> 📍 Enter location code (default = EARTH)"
     if ([string]::IsNullOrWhiteSpace($locationCode)) {
         $locationCode = "EARTH"
+        Write-Host "✨ Using default location [EARTH]: $locationCode" -ForegroundColor Green
     }
 
     $logTime = "$($currentTime.ToString("yyyy-MM-ddTHH:mm:ss"))$offset@$locationCode"
 
     $validStatuses = @("WIP", "Beta", "C", "R")
-    $status = Read-Host "Enter status [WIP, Beta, C, R] (leave empty to use last)"
+    $status = Read-Host "`n>> 🚧 Enter status [WIP, Beta, C, R] (leave empty to use last)"
     $status = $status.ToUpper()
     if ([string]::IsNullOrWhiteSpace($status)) {
         $status = Get-CurrentStatus -filePath $filePath
-        Write-Host "Using previous status: $status"
+        Write-Host "✨ Using previous status: $status" -ForegroundColor Green
     } elseif ($status -notin $validStatuses) {
         Write-Host "❌ Invalid status. Allowed: WIP, Beta, C, R" -ForegroundColor Red
-        return
+        return  # EXITING FUCNTION IS WRONG! FIX THIS ASAP! :P
     }
 
-    $changes = Read-Host "List changes (comma-separated)"
+    $changes = Read-Host "`n>> 🆕 List changes (comma-separated)"
     $changeList = $changes -split "," | ForEach-Object { ($_).Trim() } | Where-Object { $_ -ne "" }
 
-    Write-Host "`n✔️ Please confirm the following entry:" -ForegroundColor Yellow
-    Write-Host "Time: $logTime"
-    Write-Host "Status: $status"
-    Write-Host "Changes:"
-    $changeList | ForEach-Object { Write-Host "- $_" }
+    Write-Host "`n✔️ Please confirm the following entry: " -ForegroundColor Cyan
+    Write-Host "Time`t: $logTime" -ForegroundColor Yellow 
+    Write-Host "Status`t: $status" -ForegroundColor Yellow
+    Write-Host "Changes`t:" -ForegroundColor Yellow
+    $changeList | ForEach-Object { Write-Host "`t- $_" -ForegroundColor Yellow } 
 
-    $confirm = Read-Host "Do you want to save this entry? (Y/N)"
+    Write-Host "`n>> ❓ Do you want to save this entry? (Y/N): " -ForegroundColor Magenta -NoNewline
+    $confirm = Read-Host
     if ($confirm -ne "Y" -and $confirm -ne "y") {
         Write-Host "❌ Entry discarded." -ForegroundColor Red
         return
@@ -116,7 +119,8 @@ while ($true) {
     Write-Host "2. Read 'git-info.md'"
     Write-Host "3. Exit"
 
-    $choice = Read-Host ">> Enter your choice (1/2/3): "
+    Write-Host "`n>> Enter your choice (1/2/3): " -ForegroundColor Magenta -NoNewline
+    $choice = Read-Host
 
     switch ($choice) {
         "1" { Add-LogEntry -filePath $gitInfoPath }
