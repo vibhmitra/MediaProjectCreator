@@ -179,18 +179,17 @@ New-Item -Path "$folderName/visuals" -ItemType Directory -Force | Out-Null
 # The opening @" MUST be at the end of the line.
 # The closing "@ MUST be at the START of a new line. NO LEADING/TRAILING SPACES on this line.
 $gitInfo = @"
-# 📁 Project: $projectName
-# 📅 Project Started: $projectStarted
-# 📦 Project Released: TBD
-# 🚦 Status: $status
-# 🔖 Version: $version
-
+---
+📁 Project Name: $projectName
+📅 Project Started: $projectStarted
+📦 Project Released: TBD
+🚦 Status: $status
+🔖 Version: $version
 ---
 
 ## 📝 Project Summary
 $description
 
----
 
 ## 🔁 Change Log
 
