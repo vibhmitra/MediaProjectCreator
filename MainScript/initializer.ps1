@@ -194,7 +194,8 @@ $description
 ## 🔁 Change Log
 
 ### 🟡 Revision 1 – $projectStarted
-**Status:** $status\
+**Status:** $status
+
 **Changes:**
 - Project created
 - Folder initialized
