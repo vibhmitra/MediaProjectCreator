@@ -193,8 +193,8 @@ $description
 
 ## 🔁 Change Log
 
-### 🟡 Revision 1 – $($startDateForFolder.Substring(0,4))-$($startDateForFolder.Substring(4,2))-$($startDateForFolder.Substring(6,2))
-**Status:** $status
+### 🟡 Revision 1 – $projectStarted
+**Status:** $status\
 **Changes:**
 - Project created
 - Folder initialized
