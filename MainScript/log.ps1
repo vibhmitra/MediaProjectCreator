@@ -5,7 +5,7 @@ function Get-GitInfoPath {
             Write-Host "✅ git-info.md file found!" -ForegroundColor Green
             return ".\git-info.md"
         }
-
+        
         Write-Host "⚠️ git-info.md not found in current directory." -ForegroundColor Red
         Write-Host "`n>> Enter full path or folder containing it:" -ForegroundColor Magenta
         $path = Read-Host
