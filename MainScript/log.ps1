@@ -101,7 +101,7 @@ function Add-LogEntry {
     $logNumber = ((Get-Content $filePath | Select-String "### 🟡 Revision " | Measure-Object).Count + 1)
 
     Add-Content -Path $filePath -Value "`n### 🟡 Revision $logNumber – $logTime"
-    Add-Content -Path $filePath -Value "**Status:** $status"
+    Add-Content -Path $filePath -Value "**Status:** $status\"
     Add-Content -Path $filePath -Value "**Changes:**"
     foreach ($change in $changeList) {
         Add-Content -Path $filePath -Value "- $change"
